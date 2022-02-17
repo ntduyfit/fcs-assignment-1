@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
 
 export const Wrapper = styled(Box)`
-  position: sticky;
+  position: fixed;
   display: flex;
   justify-content: center;
   bottom: 0;

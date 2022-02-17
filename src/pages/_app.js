@@ -29,7 +29,7 @@ export default function MyApp(props) {
         <CartContextProvider>
           <RouteContextProvider>
             <React.Fragment>
-              <Container sx={{ pt: 2 }} maxWidth='sm'>
+              <Container sx={{ pt: 2, mb: 10 }} maxWidth='sm'>
                 <Component {...pageProps} />
               </Container>
               <Navigation />

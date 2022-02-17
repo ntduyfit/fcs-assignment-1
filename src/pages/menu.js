@@ -1,50 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 import MenuGroup from '../components/menuGroup';
+import { AppBar, Toolbar } from '@mui/material';
+import axios from '../libs/axios';
 
-const Menu = [
-  {
-    id: 1,
-    name: 'Taiwan food'
-  },
-  {
-    id: 2,
-    name: 'Must try'
-  },
-  {
-    id: 3,
-    name: 'Chill'
-  }
-];
-
-const Products = [
-  {
-    id: 1,
-    name: 'Noodle',
-    price: 4.8
-  },
-  {
-    id: 2,
-    name: 'Rice',
-    price: 3
-  },
-  {
-    id: 3,
-    name: 'Pizza',
-    price: 3.5
-  },
-  {
-    id: 4,
-    name: 'Hamburger',
-    price: 3.8
-  }
-];
-
-const MenuPage = () => {
+const MenuPage = ({ menus }) => {
   const [selectedMenu, setSelectedMenu] = useState(0);
+
+  const router = useRouter();
 
   useEffect(() => {
     const sections = document.querySelectorAll('section');
@@ -79,16 +47,18 @@ const MenuPage = () => {
 
   return (
     <Box>
-      <Box sx={{ position: 'sticky', backgroundColor: '#fff' }}>
-        <Tabs value={selectedMenu} onChange={handleChangeMenu} variant='fullWidth' centered>
-          {Menu.map((item) => (
-            <Tab key={item.id} label={item.name} href={`#menu-${item.id}`} />
-          ))}
-        </Tabs>
-      </Box>
-      <Box sx={{ mt: '10px' }}>
-        {Menu.map((item) => (
-          <MenuGroup key={item.id} products={Products} menu={item} />
+      <AppBar sx={{ backgroundColor: '#fff', boxShadow: 'none', height: '60px' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Tabs value={selectedMenu} onChange={handleChangeMenu} variant='fullWidth' centered>
+            {menus.map((item) => (
+              <Tab key={item.id} label={item.name} href={`#menu-${item.id}`} />
+            ))}
+          </Tabs>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ mt: '60px' }}>
+        {menus.map((menu) => (
+          <MenuGroup key={menu.id} menu={menu} />
         ))}
       </Box>
     </Box>
@@ -96,3 +66,19 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
+
+MenuPage.propTypes = {
+  menus: PropTypes.arrayOf(PropTypes.object),
+  products: PropTypes.arrayOf(PropTypes.object)
+};
+
+export const getStaticProps = async (context) => {
+  const { data: menus } = await axios.get('/menus');
+
+  return {
+    props: {
+      menus
+    },
+    revalidate: 20
+  };
+};

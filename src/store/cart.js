@@ -5,11 +5,13 @@ const CartContext = React.createContext({
   items: [],
   handleIncreaseQty: (productId) => {},
   handleDecreaseQty: (productId) => {},
-  handleAddProductToCart: (product) => {}
+  handleAddProductToCart: (productId, amount) => {},
+  handleRemoveItem: (productId) => {}
 });
 
 export const CartContextProvider = ({ children }) => {
   const [items, setItems] = useState([]);
+
   useEffect(() => {
     const cartString = localStorage.getItem('cart');
     if (cartString) {
@@ -18,9 +20,15 @@ export const CartContextProvider = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (items.length) {
+      localStorage.setItem('cart', JSON.stringify(items));
+    }
+  }, [items]);
+
   const handleIncreaseQty = (productId) => {
     const newItems = [...items];
-    const targetProduct = items.find((item) => item.id === productId);
+    const targetProduct = items.find((item) => item.productId === productId);
     if (targetProduct) {
       targetProduct.amount++;
       setItems(newItems);
@@ -29,29 +37,36 @@ export const CartContextProvider = ({ children }) => {
 
   const handleDecreaseQty = (productId) => {
     const newItems = [...items];
-    const targetProduct = items.find((item) => item.id === productId);
+    const targetProduct = items.find((item) => item.productId === productId);
     if (targetProduct) {
       --targetProduct.amount;
-      if (targetProduct > 0) {
+      if (targetProduct.amount > 0) {
         setItems(newItems);
       } else {
-        setItems((prev) => prev.filter((item) => item.id !== productId));
+        setItems((prev) => prev.filter((item) => item.productId !== productId));
       }
     }
   };
 
-  const handleAddProductToCart = (product) => {
-    const targetProduct = items.find((item) => item.id === product.id);
+  const handleAddProductToCart = (productId, amount) => {
+    const targetProduct = items.find((item) => item === productId);
     if (targetProduct) {
-      handleIncreaseQty(product.id);
+      handleIncreaseQty(productId);
     } else {
-      const newItems = [...items, product];
+      const newItems = [...items, { productId, amount }];
       setItems(newItems);
     }
   };
 
+  const handleRemoveItem = (productId) => {
+    const newItems = items.filter((item) => item.productId !== productId);
+    setItems(newItems);
+  };
+
   return (
-    <CartContext.Provider value={{ items, handleIncreaseQty, handleDecreaseQty, handleAddProductToCart }}>{children}</CartContext.Provider>
+    <CartContext.Provider value={{ items, handleIncreaseQty, handleDecreaseQty, handleAddProductToCart, handleRemoveItem }}>
+      {children}
+    </CartContext.Provider>
   );
 };
 

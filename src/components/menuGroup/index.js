@@ -14,9 +14,9 @@ const MenuGroup = ({ products, menu }) => {
         {menu.name}
       </Typography>
       <ProductsList component='ul'>
-        {products.map((product) => (
-          <React.Fragment key={product.id}>
-            <Product product={product} />
+        {menu.items.map((item) => (
+          <React.Fragment key={item}>
+            <Product productId={item} />
             <Divider />
           </React.Fragment>
         ))}
@@ -28,6 +28,5 @@ const MenuGroup = ({ products, menu }) => {
 export default MenuGroup;
 
 MenuGroup.propTypes = {
-  products: PropTypes.arrayOf(PropTypes.object),
   menu: PropTypes.object
 };
