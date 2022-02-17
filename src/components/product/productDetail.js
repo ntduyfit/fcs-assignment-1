@@ -22,6 +22,7 @@ const ProductDetail = ({ product, isOpen, handleClose }) => {
   const handleAddProduct = () => {
     handleAddProductToCart(product.id, amount);
     setAmount(1);
+
     handleClose();
   };
 
